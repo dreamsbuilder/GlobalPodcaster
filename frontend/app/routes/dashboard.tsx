@@ -177,7 +177,11 @@ export default function Dashboard() {
             </p>
           </div>
           
+<<<<<<< HEAD
           <Link to="/onboarding/rss-feed">
+=======
+          <Link to="/OnboardingRSSFeed">
+>>>>>>> 90ec634 (update)
             <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]">
               <Plus className="w-5 h-5 mr-2" />
               Add New Podcast
