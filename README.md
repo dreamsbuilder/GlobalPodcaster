@@ -166,16 +166,25 @@ Esto evita URLs mal formadas como `wss://https//...` y garantiza la compatibilid
 - You must make the coral server and coral studio ports public.
 - Then, in the coral studio console, use the public address of the coral server.
 
+### 🔑 API Keys and Environment Variables
+For the transcription agent to work with Deepgram, you need a valid API key. Create a `.env` file in the root of the project with the following content:
+
+```env
+DEEPGRAM_API_KEY=your_deepgram_api_key_here
+```
+This variable will be automatically read by the transcription agent. If it is missing or incorrect, transcription will fail.
+
+### Translation Agent: Mistral AI API Key
+
+To use the translation agent with Mistral AI, you need a valid API key. Add the following line to your `.env` file in the root of the project:
+
+```env
+MISTRAL_API_KEY=your_mistral_api_key_here
+```
+
+This variable will be automatically read by the translation agent. If it is missing or incorrect, translation will fail.
 
 ### How to run
 1. Open in GitHub Codespaces / devcontainer or locally
 2. Install dependencies: `pip install -r requirements.txt`
-3. Run simulation: `echo '{"content": "Hola agente"}' | AGENT_NAME=TestAgent python3 agents/agent.py`
-```bash
-# you should get an output like the following
-{"type": "response", "content": "TestAgent received: Hola agente"}
-```
-4. Run SImulation Script: 
-```bash
-python3 test_agent.py
-```
+3. Run simulation: `echo '{"sender": "user", "receiver": "orchestrator", "content": "https://feeds.megaphone.fm/sciencevs"}' | python3 agents/agent.py`

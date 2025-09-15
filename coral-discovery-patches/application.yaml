@@ -134,3 +134,32 @@ registry:
       command: [ "python3", "../agents/agent.py" ]
       environment:
         - option: "AGENT_NAME"
+  
+  rss_fetch:
+    options:
+      - name: "RSS_FEED_URL"
+        type: "string"
+        description: "URL del feed RSS a obtener"
+        default: "https://example.com/rss"
+    runtime:
+      type: "executable"
+      command: [ "python3", "../agents/rss-fetch-agent/agent.py" ]
+      environment:
+        - option: "RSS_FEED_URL"
+  
+  transcription:
+    options:
+      - name: "AUDIO_FILE_URL"
+        type: "string"
+        description: "URL del archivo de audio a transcribir"
+    runtime:
+      type: "executable"
+      command: ["python3", "../agents/transcription-agent/agent.py"]
+      environment:
+        - option: "AUDIO_FILE_URL"
+        - option: "DEEPGRAM_API_KEY"
+
+  translation-agent:
+    runtime:
+      type: "executable"
+      command: [ "python3", "agents/translation-agent/agent.py" ]

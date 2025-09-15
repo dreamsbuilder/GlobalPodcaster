@@ -18,5 +18,6 @@
     }
   },
   "postCreateCommand": "pip install -r requirements.txt",
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "runArgs": ["--env-file", ".env"]
 }
