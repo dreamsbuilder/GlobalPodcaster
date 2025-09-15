@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -211,3 +212,11 @@ __marimo__/
 
 # Logs of seen episodes to avoid reprocessing
 seen_episodes*
+=======
+.DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+>>>>>>> a977d89 (app set-up)
