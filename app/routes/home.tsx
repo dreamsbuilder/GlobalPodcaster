@@ -6,10 +6,10 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Globe, Mic, Languages, Zap, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-export function meta({}: Route.MetaArgs) {
+export const meta = ({}: Route.MetaArgs) => {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Global Podcaster" },
+    { name: "description", content: "Create Podcast in multiple languages with your voice" },
   ];
 }
 
