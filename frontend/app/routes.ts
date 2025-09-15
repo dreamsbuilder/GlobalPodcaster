@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
@@ -19,3 +20,15 @@ import { type RouteConfig, index } from "@react-router/dev/routes";
 
 export default [index("routes/home.tsx")] satisfies RouteConfig;
 >>>>>>> c8d3493 (app set-up)
+=======
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
+
+export default [
+    index("routes/home.tsx"),
+    route("/login", "routes/login.tsx"),
+    route("/signup", "routes/signup.tsx"),
+    // index("routes/forgot-password.tsx"),
+    // index("routes/dashboard.tsx"),
+    // index("routes/profile.tsx"),
+] satisfies RouteConfig;
+>>>>>>> 36fd631 (auth UI)

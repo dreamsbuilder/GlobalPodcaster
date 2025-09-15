@@ -7,6 +7,7 @@ import { Globe, Mic, Languages, Zap, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const meta = ({}: Route.MetaArgs) => {
   return [
     { title: "Global Podcaster" },
@@ -17,6 +18,12 @@ export function meta({}: Route.MetaArgs) {
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
 >>>>>>> c8d3493 (app set-up)
+=======
+export const meta = ({}: Route.MetaArgs) => {
+  return [
+    { title: "Global Podcaster" },
+    { name: "description", content: "Create Podcast in multiple languages with your voice" },
+>>>>>>> 36fd631 (auth UI)
   ];
 }
 
