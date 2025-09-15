@@ -1,6 +1,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d8e6485 (app set-up)
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
@@ -21,6 +24,7 @@ import { type RouteConfig, index } from "@react-router/dev/routes";
 
 export default [index("routes/home.tsx")] satisfies RouteConfig;
 >>>>>>> c8d3493 (app set-up)
+<<<<<<< HEAD
 =======
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
@@ -43,3 +47,5 @@ import { type RouteConfig, index } from "@react-router/dev/routes";
 
 export default [index("routes/home.tsx")] satisfies RouteConfig;
 >>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> d8e6485 (app set-up)

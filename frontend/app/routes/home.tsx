@@ -9,17 +9,24 @@ import { motion } from "framer-motion";
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d8e6485 (app set-up)
 export const meta = ({}: Route.MetaArgs) => {
   return [
     { title: "Global Podcaster" },
     { name: "description", content: "Create Podcast in multiple languages with your voice" },
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> d8e6485 (app set-up)
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> c8d3493 (app set-up)
 =======
@@ -30,6 +37,9 @@ export const meta = ({}: Route.MetaArgs) => {
 >>>>>>> 36fd631 (auth UI)
 =======
 >>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> c8d3493 (app set-up)
+>>>>>>> d8e6485 (app set-up)
   ];
 }
 
@@ -122,16 +132,22 @@ const Home = () => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d8e6485 (app set-up)
                   onClick={() => navigate('/auth/login')}
 =======
                   onClick={() => navigate('/login')}
 >>>>>>> c8d3493 (app set-up)
+<<<<<<< HEAD
 =======
                   onClick={() => navigate('/auth/login')}
 >>>>>>> 3e7630c (added extra pages)
 =======
                   onClick={() => navigate('/login')}
 >>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> d8e6485 (app set-up)
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-8 py-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get Started

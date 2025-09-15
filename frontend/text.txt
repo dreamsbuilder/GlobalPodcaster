@@ -2,8 +2,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 90ec634 (update)
+=======
+>>>>>>> d8e6485 (app set-up)
 import React, { useState, useEffect } from "react";
 import { 
   Plus, 
@@ -391,6 +394,7 @@ export default function Dashboard() {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+<<<<<<< HEAD
 =======
 import { useState } from "react";
 >>>>>>> 36fd631 (auth UI)
@@ -876,6 +880,8 @@ export default function Dashboard() {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+=======
+>>>>>>> d8e6485 (app set-up)
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Globe, Mic, Languages, Zap, ArrowRight } from "lucide-react";
@@ -982,7 +988,11 @@ export default function OnboardingWelcome() {
           </CardContent>
         </Card>
       </motion.div>
+<<<<<<< HEAD
 >>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> c8d3493 (app set-up)
+>>>>>>> d8e6485 (app set-up)
     </div>
   );
 }
