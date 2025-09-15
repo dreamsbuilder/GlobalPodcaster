@@ -1,199 +1,385 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Link, useNavigate } from "react-router-dom";
-import { Globe, Mic, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { 
+  Plus, 
+  Globe, 
+  Mic, 
+  Clock, 
+  TrendingUp,
+  ExternalLink,
+  Settings,
+  Play,
+  Pause,
+  MoreVertical
+} from "lucide-react";
 
-const Login = () => {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false
-  });
+// Dummy data
+const dummyUser = {
+  id: 1,
+  full_name: "John Doe",
+  email: "john@example.com",
+  onboarding_completed: true
+};
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({ 
-      ...formData, 
-      [name]: type === "checkbox" ? checked : value 
-    });
-  };
+const dummyPodcasts = [
+  {
+    id: 1,
+    title: "Tech Talk Daily",
+    description: "Daily discussions about the latest in technology",
+    original_language: "English",
+    cover_image: "https://via.placeholder.com/150/4F46E5/FFFFFF?text=TT",
+    episode_count: 45,
+    created_date: "2024-01-15",
+    updated_date: "2024-09-10"
+  },
+  {
+    id: 2,
+    title: "History Uncovered",
+    description: "Exploring forgotten stories from the past",
+    original_language: "English",
+    cover_image: "https://via.placeholder.com/150/059669/FFFFFF?text=HU",
+    episode_count: 28,
+    created_date: "2024-02-20",
+    updated_date: "2024-09-08"
+  },
+  {
+    id: 3,
+    title: "Mindful Moments",
+    description: "Guided meditations and wellness tips",
+    original_language: "English",
+    cover_image: "https://via.placeholder.com/150/DC2626/FFFFFF?text=MM",
+    episode_count: 67,
+    created_date: "2024-03-10",
+    updated_date: "2024-09-12"
+  }
+];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Navigate to dashboard (without actual authentication)
-    navigate('/dashboard');
-  };
+const dummyTranslations = [
+  {
+    id: 1,
+    podcast_id: 1,
+    target_language: "Spanish",
+    status: "published",
+    progress: 100,
+    episode_count: 45,
+    created_date: "2024-08-15",
+    updated_date: "2024-09-10"
+  },
+  {
+    id: 2,
+    podcast_id: 1,
+    target_language: "French",
+    status: "in_progress",
+    progress: 75,
+    episode_count: 34,
+    created_date: "2024-08-20",
+    updated_date: "2024-09-08"
+  },
+  {
+    id: 3,
+    podcast_id: 2,
+    target_language: "German",
+    status: "published",
+    progress: 100,
+    episode_count: 28,
+    created_date: "2024-08-25",
+    updated_date: "2024-09-05"
+  },
+  {
+    id: 4,
+    podcast_id: 3,
+    target_language: "Italian",
+    status: "processing",
+    progress: 45,
+    episode_count: 30,
+    created_date: "2024-09-01",
+    updated_date: "2024-09-12"
+  }
+];
 
-  return (
-    <div className="min-h-screen hero-gradient flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        {/* Logo */}
-        <div className="text-center">
-          <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl text-white mb-2">
-            <div className="flex items-center gap-1">
-              <Globe className="w-7 h-7" />
-              <Mic className="w-6 h-6" />
-            </div>
-            Global Podcaster
-          </Link>
-          <p className="text-white/80">Welcome back to your global journey</p>
+// Stats Overview Component
+const StatsOverview = ({ stats }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <Card className="backdrop-blur-md bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-blue-600 mb-1">Total Podcasts</p>
+            <p className="text-3xl font-bold text-blue-900">{stats.totalPodcasts}</p>
+          </div>
+          <Mic className="w-8 h-8 text-blue-600" />
         </div>
+      </CardContent>
+    </Card>
+    
+    <Card className="backdrop-blur-md bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-green-600 mb-1">Languages</p>
+            <p className="text-3xl font-bold text-green-900">{stats.totalLanguages}</p>
+          </div>
+          <Globe className="w-8 h-8 text-green-600" />
+        </div>
+      </CardContent>
+    </Card>
+    
+    <Card className="backdrop-blur-md bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-purple-600 mb-1">Total Translations</p>
+            <p className="text-3xl font-bold text-purple-900">{stats.totalTranslations}</p>
+          </div>
+          <TrendingUp className="w-8 h-8 text-purple-600" />
+        </div>
+      </CardContent>
+    </Card>
+    
+    <Card className="backdrop-blur-md bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-orange-600 mb-1">Active</p>
+            <p className="text-3xl font-bold text-orange-900">{stats.activeTranslations}</p>
+          </div>
+          <Clock className="w-8 h-8 text-orange-600" />
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+);
 
-        {/* Login Card */}
-        <Card className="shadow-card border-0 backdrop-blur-sm bg-white/95">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-bold text-charcoal">Welcome Back</CardTitle>
-            <CardDescription className="text-medium-gray">
-              Sign in to continue your podcasting journey
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-charcoal">
-                Email Address
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-medium-gray" />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="pl-10 h-12 transition-smooth focus:ring-2 focus:ring-ocean-blue"
-                  required
-                />
-              </div>
+// Podcast Card Component
+const PodcastCard = ({ podcast, translations }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  return (
+    <Card className="hover:shadow-lg transition-all duration-200">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-4">
+          <img 
+            src={podcast.cover_image} 
+            alt={podcast.title}
+            className="w-16 h-16 rounded-lg object-cover"
+          />
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 truncate">
+                {podcast.title}
+              </h3>
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                {isPlaying ? (
+                  <Pause className="w-4 h-4 text-gray-600" />
+                ) : (
+                  <Play className="w-4 h-4 text-gray-600" />
+                )}
+              </button>
             </div>
-
-            {/* Password Field */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-charcoal">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-medium-gray" />
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="pl-10 pr-10 h-12 transition-smooth focus:ring-2 focus:ring-ocean-blue"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-medium-gray hover:text-charcoal transition-smooth"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            
+            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+              {podcast.description}
+            </p>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-500">
+                  {podcast.episode_count} episodes
+                </span>
+                <Badge variant="secondary">
+                  {podcast.original_language}
+                </Badge>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {translations.map((translation) => (
+                  <Badge 
+                    key={translation.id}
+                    variant={translation.status === 'published' ? 'success' : 'warning'}
+                    className="text-xs"
+                  >
+                    {translation.target_language}
+                  </Badge>
+                ))}
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <MoreVertical className="w-4 h-4 text-gray-400" />
                 </button>
               </div>
             </div>
-
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="rememberMe" 
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onCheckedChange={(checked) => 
-                    setFormData({ ...formData, rememberMe: checked as boolean })
-                  }
-                />
-                <Label 
-                  htmlFor="rememberMe" 
-                  className="text-sm text-medium-gray cursor-pointer"
-                >
-                  Remember me
-                </Label>
-              </div>
-              <Link 
-                to="/forgot-password" 
-                className="text-sm text-ocean-blue hover:text-soft-teal transition-smooth font-medium"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            {/* Sign In Button */}
-            <Button type="submit" size="lg" variant="hero" className="w-full h-12 group">
-              Sign In
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-            </form>
-
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-medium-gray">Or continue with</span>
-              </div>
-            </div>
-
-            {/* Social Login Options */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" size="lg" className="h-12">
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Google
-              </Button>
-              <Button variant="outline" size="lg" className="h-12">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.024-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.969.099.12.112.225.085.402-.093.334-.298 1.269-.337 1.445-.053.238-.174.289-.402.175-1.499-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.393-.889l-.651 2.432c-.235.909-.872 2.051-1.296 2.748C9.539 23.812 10.763 24.001 12.017 24.001 18.624 24.001 24.001 18.624 24.001 12.017 24.001 5.396 18.624.029 12.017.029z"/>
-                </svg>
-                Apple
-              </Button>
-            </div>
-
-            {/* Sign Up Link */}
-            <div className="text-center pt-4 border-t border-border/50">
-              <p className="text-sm text-medium-gray">
-                Don't have an account?{" "}
-                <Link to="/signup" className="font-medium text-ocean-blue hover:text-soft-teal transition-smooth">
-                  Create one now
-                </Link>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 text-center text-white/80">
-          <div>
-            <div className="text-xl font-bold text-white">50K+</div>
-            <div className="text-xs">Podcasters</div>
-          </div>
-          <div>
-            <div className="text-xl font-bold text-white">40+</div>
-            <div className="text-xs">Languages</div>
-          </div>
-          <div>
-            <div className="text-xl font-bold text-white">1M+</div>
-            <div className="text-xs">Episodes Translated</div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
-export default Login;
+// Translation Status Component
+const TranslationStatus = ({ translations }) => (
+  <Card className="backdrop-blur-md bg-white/80 shadow-lg border-0">
+    <CardHeader className="pb-4">
+      <CardTitle className="flex items-center gap-2">
+        <Globe className="w-5 h-5 text-green-600" />
+        Translation Status
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      {translations.map((translation) => (
+        <div key={translation.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-medium text-sm">{translation.target_language}</span>
+              <Badge 
+                variant={
+                  translation.status === 'published' ? 'success' :
+                  translation.status === 'in_progress' ? 'warning' : 'default'
+                }
+              >
+                {translation.status.replace('_', ' ')}
+              </Badge>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  translation.status === 'published' ? 'bg-green-500' :
+                  translation.status === 'in_progress' ? 'bg-yellow-500' : 'bg-blue-500'
+                }`}
+                style={{ width: `${translation.progress}%` }}
+              />
+            </div>
+            <span className="text-xs text-gray-500 mt-1">
+              {translation.episode_count} episodes • {translation.progress}%
+            </span>
+          </div>
+        </div>
+      ))}
+    </CardContent>
+  </Card>
+);
+
+// Empty State Component
+const EmptyState = () => (
+  <Card className="text-center py-12">
+    <CardContent>
+      <Mic className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        No podcasts yet
+      </h3>
+      <p className="text-gray-600 mb-6">
+        Add your first podcast to start globalizing your content
+      </p>
+      <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Plus className="w-4 h-4 mr-2" />
+        Add Your First Podcast
+      </Button>
+    </CardContent>
+  </Card>
+);
+
+export default function Dashboard() {
+  const [user, setUser] = useState(null);
+  const [podcasts, setPodcasts] = useState([]);
+  const [translations, setTranslations] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate API loading
+    const loadDashboardData = () => {
+      setTimeout(() => {
+        setUser(dummyUser);
+        setPodcasts(dummyPodcasts);
+        setTranslations(dummyTranslations);
+        setIsLoading(false);
+      }, 1000);
+    };
+
+    loadDashboardData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-pulse flex items-center gap-3">
+          <div className="w-8 h-8 bg-blue-500 rounded-full animate-bounce"></div>
+          <div className="text-xl font-medium text-gray-600">Loading your podcasts...</div>
+        </div>
+      </div>
+    );
+  }
+
+  const stats = {
+    totalPodcasts: podcasts.length,
+    totalLanguages: [...new Set(translations.map(t => t.target_language))].length,
+    totalTranslations: translations.length,
+    activeTranslations: translations.filter(t => t.status === 'published').length
+  };
+
+  return (
+    <div className="min-h-screen p-6 md:p-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              Welcome back, {user?.full_name?.split(' ')[0] || 'there'}! 👋
+            </h1>
+            <p className="text-gray-600">
+              {podcasts.length === 0 
+                ? "Ready to globalize your first podcast?"
+                : `You have ${stats.totalTranslations} translations across ${stats.totalLanguages} languages`
+              }
+            </p>
+          </div>
+          
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]">
+            <Plus className="w-5 h-5 mr-2" />
+            Add New Podcast
+          </Button>
+        </div>
+
+        {/* Stats Overview */}
+        <StatsOverview stats={stats} />
+
+        {/* Main Content */}
+        {podcasts.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* My Podcasts */}
+            <div className="lg:col-span-2">
+              <Card className="backdrop-blur-md bg-white/80 shadow-lg border-0">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Mic className="w-5 h-5 text-blue-600" />
+                      My Podcasts
+                    </span>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                      {podcasts.length}
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {podcasts.map((podcast) => (
+                    <PodcastCard 
+                      key={podcast.id} 
+                      podcast={podcast} 
+                      translations={translations.filter(t => t.podcast_id === podcast.id)}
+                    />
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Translation Status */}
+            <div>
+              <TranslationStatus translations={translations} />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
