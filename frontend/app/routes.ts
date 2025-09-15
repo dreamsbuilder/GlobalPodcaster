@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
@@ -13,3 +14,8 @@ export default [
     route("/onboarding/complete", "routes/onboarding/complete.tsx"),
 
 ] satisfies RouteConfig;
+=======
+import { type RouteConfig, index } from "@react-router/dev/routes";
+
+export default [index("routes/home.tsx")] satisfies RouteConfig;
+>>>>>>> c8d3493 (app set-up)
