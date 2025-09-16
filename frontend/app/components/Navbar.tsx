@@ -49,10 +49,14 @@ const Navbar = () => {
       console.log("Logging out...");
       // Redirect to login page after logout
 <<<<<<< HEAD
+<<<<<<< HEAD
       navigate("/auth/login");
 =======
       navigate("/login");
 >>>>>>> 90ec634 (update)
+=======
+      navigate("/auth/login");
+>>>>>>> 3e7630c (added extra pages)
     } catch (error) {
       console.error("Logout failed:", error);
     }

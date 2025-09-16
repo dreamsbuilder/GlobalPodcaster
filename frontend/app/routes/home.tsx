@@ -114,10 +114,14 @@ const Home = () => {
               >
                 <Button
 <<<<<<< HEAD
+<<<<<<< HEAD
                   onClick={() => navigate('/auth/login')}
 =======
                   onClick={() => navigate('/login')}
 >>>>>>> c8d3493 (app set-up)
+=======
+                  onClick={() => navigate('/auth/login')}
+>>>>>>> 3e7630c (added extra pages)
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-8 py-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get Started
