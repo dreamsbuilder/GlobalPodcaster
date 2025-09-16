@@ -99,7 +99,7 @@ const Home = () => {
                 transition={{ delay: 0.8, duration: 0.6 }}
               >
                 <Button
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/auth/login')}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-8 py-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get Started
