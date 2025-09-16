@@ -145,7 +145,7 @@ const Login = () => {
             <div className="text-center pt-4 border-t border-border/50">
               <p className="text-sm text-medium-gray">
                 Don't have an account?{" "}
-                <Link to="/signup" className="font-medium text-ocean-blue hover:text-soft-teal transition-smooth">
+                <Link to="/auth/signup" className="font-medium text-ocean-blue hover:text-soft-teal transition-smooth">
                   Create one now
                 </Link>
               </p>

@@ -48,7 +48,7 @@ const Navbar = () => {
       // Add your logout logic here (clear tokens, etc.)
       console.log("Logging out...");
       // Redirect to login page after logout
-      navigate("/login");
+      navigate("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
