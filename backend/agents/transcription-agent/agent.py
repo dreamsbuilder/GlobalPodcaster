@@ -5,8 +5,15 @@ import json
 import asyncio
 from dotenv import load_dotenv
 
-load_dotenv()
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv("/workspaces/GlobalPodcaster/devcontainer/.env")
+
+# Depuración: Verificar el valor de DEEPGRAM_API_KEY
 DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
+
+if not DEEPGRAM_API_KEY:
+    raise ValueError("DEEPGRAM_API_KEY no está configurada. Asegúrate de que esté definida en el archivo .env o en las variables de entorno.")
+
 dg_client = Deepgram(DEEPGRAM_API_KEY)
 
 async def transcribe(audio_url):

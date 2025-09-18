@@ -22,6 +22,9 @@ def fetch_rss_feed(url):
             })
     return entries
 
+def log_with_spacing(message):
+    print("\n" + message, file=sys.stderr)
+
 if __name__ == "__main__":
     for line in sys.stdin:
         try:
@@ -40,4 +43,4 @@ if __name__ == "__main__":
                 "receiver": msg.get("sender", "unknown"),
                 "content": f"Error: {str(e)}"
             }
-            print(json.dumps(error_response), flush=True)
+            log_with_spacing(json.dumps(error_response))

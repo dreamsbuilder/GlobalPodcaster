@@ -59,6 +59,9 @@ def save_seen_episodes_for_feed(feed_url, seen):
     with open(state_file, "w") as f:
         json.dump(list(seen), f)
 
+def log_with_spacing(message):
+    print("\n" + message, file=sys.stderr)
+
 if __name__ == "__main__":
     for line in sys.stdin:
         msg = {}  # Inicializa msg para evitar NameError en except

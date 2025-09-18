@@ -1,12 +1,17 @@
+from dotenv import load_dotenv
 import os
 import sys
 import json
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv("/workspaces/GlobalPodcaster/devcontainer/.env")
+
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 MISTRAL_API_URL = os.getenv("MISTRAL_API_URL", "https://api.mistral.ai/v1/chat/completions")
+
+if not MISTRAL_API_KEY:
+    raise ValueError("MISTRAL_API_KEY no está configurada. Asegúrate de que esté definida en el archivo .env o en las variables de entorno.")
 
 HEADERS = {
     "Authorization": f"Bearer {MISTRAL_API_KEY}",
@@ -28,6 +33,9 @@ def mistral_translate(text, target_lang):
     response.raise_for_status()
     result = response.json()
     return result["choices"][0]["message"]["content"].strip()
+
+def log_with_spacing(message):
+    print("\n" + message, file=sys.stderr)
 
 if __name__ == "__main__":
     for line in sys.stdin:

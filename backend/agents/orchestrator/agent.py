@@ -55,7 +55,12 @@ def call_transcription_agent(audio_url):
         "content": audio_url
     }
     stdout, _ = proc.communicate(input=json.dumps(coral_msg) + "\n")
-    response = json.loads(stdout)
+    try:
+        response = json.loads(stdout)
+    except json.JSONDecodeError as e:
+        print(f"Error al decodificar JSON: {e}")
+        print(f"Contenido de stdout: {stdout}")
+        return None
     return response.get("content", "")
 
 def call_translation_agent(text, target_lang="es"):
@@ -82,6 +87,10 @@ def call_tts_agent(text, voice_id=None):
     return run_agent("../../agents/tts-agent/agent.py", msg)  # assuming run_agent returns parsed content
 
 
+def log_with_spacing(message):
+    print(message, file=sys.stderr)
+
+
 if __name__ == "__main__":
     for line in sys.stdin:
         try:
@@ -106,12 +115,12 @@ if __name__ == "__main__":
                     continue
                 print(f"DEBUG: Procesando audio_url: {audio_url}", file=sys.stderr)
                 transcript = call_transcription_agent(audio_url)
-                print(f"DEBUG: Transcript obtenido: {transcript[:100]}...", file=sys.stderr)
+                log_with_spacing(f"DEBUG: Transcript obtenido: {transcript[:25]}...")
                 translation = call_translation_agent(transcript, target_lang)
-                #print(f"DEBUG: Traducción obtenida: {translation[:100]}...", file=sys.stderr)
+                log_with_spacing(f"DEBUG: Traducción obtenida: {translation[:25]}...")
                 
                 # Llamar al agente TTS para generar el audio
-                tts_result = call_tts_agent(translation, voice_id=os.getenv("TTS_DEFAULT_VOICE_ID"))
+                #tts_result = call_tts_agent(translation, voice_id=os.getenv("TTS_DEFAULT_VOICE_ID"))
                 #tts_audio_url = tts_result.get("audio_url") or tts_result.get("content", {}).get("audio_url")
                 
                 # Agregar el audio_url generado al resultado

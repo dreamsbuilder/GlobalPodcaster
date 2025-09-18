@@ -62,6 +62,9 @@ def tts_to_file(text, voice_id):
     except Exception as e:
         raise
 
+def log_with_spacing(message):
+    print("\n" + message + "\n", file=sys.stderr)
+
 if __name__ == "__main__":
     # read incoming JSON messages from stdin (one per line)
     for line in sys.stdin:
