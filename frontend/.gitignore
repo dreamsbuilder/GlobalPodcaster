@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -213,10 +214,15 @@ __marimo__/
 # Logs of seen episodes to avoid reprocessing
 seen_episodes*
 =======
+=======
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
 .DS_Store
 /node_modules/
 
 # React Router
 /.react-router/
 /build/
+<<<<<<< HEAD
 >>>>>>> a977d89 (app set-up)
+=======
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)

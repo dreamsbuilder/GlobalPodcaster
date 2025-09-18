@@ -11,12 +11,15 @@ import type { Route } from "./+types/root";
 import "./app.css";
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Navbar from "./components/Navbar";
 =======
 >>>>>>> c8d3493 (app set-up)
 =======
 import Navbar from "./components/Navbar";
 >>>>>>> 90ec634 (update)
+=======
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -43,12 +46,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <Navbar />
 =======
 >>>>>>> c8d3493 (app set-up)
 =======
         <Navbar />
 >>>>>>> 90ec634 (update)
+=======
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
         {children}
         <ScrollRestoration />
         <Scripts />

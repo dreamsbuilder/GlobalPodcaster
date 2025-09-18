@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
@@ -37,3 +38,8 @@ export default [
 
 ] satisfies RouteConfig;
 >>>>>>> 36fd631 (auth UI)
+=======
+import { type RouteConfig, index } from "@react-router/dev/routes";
+
+export default [index("routes/home.tsx")] satisfies RouteConfig;
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)

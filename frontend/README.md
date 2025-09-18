@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 <<<<<<< HEAD
@@ -436,6 +437,8 @@ This variable will be automatically read by the translation agent. If it is miss
 =======
 >>>>>>> c0e20a9 (Move frontend repo into frontend/ folder)
 >>>>>>> fd3be08 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
 # Welcome to React Router!
 
 A modern, production-ready template for building full-stack React applications using React Router.
@@ -524,6 +527,7 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 
 Built with ❤️ using React Router.
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> a977d89 (app set-up)
 =======
 <<<<<<< HEAD
@@ -531,3 +535,5 @@ Built with ❤️ using React Router.
 >>>>>>> a977d89 (app set-up)
 >>>>>>> c0e20a9 (Move frontend repo into frontend/ folder)
 >>>>>>> fd3be08 (Move frontend repo into frontend/ folder)
+=======
+>>>>>>> d61dea1 (Move frontend repo into frontend/ folder)
