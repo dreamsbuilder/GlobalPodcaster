@@ -1,4 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+<<<<<<< HEAD
+>>>>>>> fd3be08 (Move frontend repo into frontend/ folder)
 # 🏓 Global Podcaster App
 `Global Podcaster App` is a multi-agent pipeline that fetches podcast audio from any RSS feed, transcribes it to text using Deepgram, and translates the transcript to your target language using Mistral AI—all orchestrated via Coral Protocol.  
 This project demonstrates how to build composable, language-agnostic agent workflows for global podcast accessibility and discovery.
@@ -427,6 +432,10 @@ This variable will be automatically read by the translation agent. If it is miss
 > The monitor prints to the console how many feeds are pending and the progress for each one.
 > State files and results are stored in the project root directory.
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> c0e20a9 (Move frontend repo into frontend/ folder)
+>>>>>>> fd3be08 (Move frontend repo into frontend/ folder)
 # Welcome to React Router!
 
 A modern, production-ready template for building full-stack React applications using React Router.
@@ -514,4 +523,11 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ---
 
 Built with ❤️ using React Router.
+<<<<<<< HEAD
 >>>>>>> a977d89 (app set-up)
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> a977d89 (app set-up)
+>>>>>>> c0e20a9 (Move frontend repo into frontend/ folder)
+>>>>>>> fd3be08 (Move frontend repo into frontend/ folder)
