@@ -97,7 +97,7 @@ if __name__ == "__main__":
             msg = json.loads(line)
             feed_url = msg.get("content")
             new_episodes = call_rss_monitor_agent(feed_url)
-            print("DEBUG NEW EPISODES:", new_episodes)
+            print("DEBUG NEW EPISODES:", new_episodes, file=sys.stderr)
             if not isinstance(new_episodes, list) or not new_episodes:
                 response = {
                     "sender": "orchestrator",
@@ -119,17 +119,29 @@ if __name__ == "__main__":
                 translation = call_translation_agent(transcript, target_lang)
                 log_with_spacing(f"DEBUG: Traducción obtenida: {translation[:25]}...")
                 
+                # Truncar la traducción para ahorrar créditos TTS (máximo 500 caracteres)
+                translation_truncated = translation[:500] + "..." if len(translation) > 500 else translation
+                
                 # Llamar al agente TTS para generar el audio
-                #tts_result = call_tts_agent(translation, voice_id=os.getenv("TTS_DEFAULT_VOICE_ID"))
-                #tts_audio_url = tts_result.get("audio_url") or tts_result.get("content", {}).get("audio_url")
+                tts_result = call_tts_agent(translation_truncated, voice_id=os.getenv("TTS_DEFAULT_VOICE_ID"))
+                log_with_spacing(f"DEBUG: TTS result: {tts_result}")
+                
+                # Extraer la URL del audio generado
+                tts_audio_url = None
+                if tts_result and isinstance(tts_result, dict):
+                    tts_content = tts_result.get("content", {})
+                    if isinstance(tts_content, dict):
+                        tts_audio_url = tts_content.get("audio_url")
+                
+                log_with_spacing(f"DEBUG: TTS audio URL generada: {tts_audio_url}")
                 
                 # Agregar el audio_url generado al resultado
                 results.append({
                     "title": ep.get("title"),
-                    "audio_url": audio_url,
+                    "audio_url": audio_url,  # URL original del podcast
                     "transcript": transcript,
-                    "translation": translation
-                    #"tts_audio_url": tts_audio_url  # Nuevo campo para el audio generado
+                    "translation": translation,
+                    "tts_audio_url": tts_audio_url  # Nuevo campo para el audio generado
                 })
             response = {
                 "sender": "orchestrator",

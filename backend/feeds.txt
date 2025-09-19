@@ -1,4 +1,6 @@
 # Add one RSS feed URL per line
-https://feeds.megaphone.fm/sciencevs
 https://feeds.npr.org/500005/podcast.xml
+https://feeds.megaphone.fm/vergecast
 https://feeds.simplecast.com/54nAGcIl
+https://anchor.fm/s/822ba20/podcast/rss
+

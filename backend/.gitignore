@@ -1,3 +1,35 @@
+# ================================
+# GLOBAL PODCASTER BACKEND - Specific Ignores
+# ================================
+
+# Podcast Processing Files (CRITICAL - Do not commit these)
+*.mp3
+*.wav
+*.m4a
+*.aac
+*.ogg
+
+# Agent storage directories
+agents/*/storage/
+storage/
+
+# Feed monitoring state files
+feed_monitor_state/
+seen_episodes*.json
+
+# Agent logs and process files
+*.log
+*.pid
+feed_monitor_scheduler.log
+nohup.out
+
+# Test output files
+test/react-test/logs/
+
+# ================================
+# STANDARD PYTHON IGNORES
+# ================================
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

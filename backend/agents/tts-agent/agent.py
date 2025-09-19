@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from elevenlabs import ElevenLabs  # client wrapper
 # alternative direct helpers (some SDK versions also expose generate/save functions)
 
-load_dotenv()
+load_dotenv("/workspaces/GlobalPodcaster/devcontainer/.env")
 
 ELEVEN_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 DEFAULT_VOICE_ID = os.getenv("TTS_DEFAULT_VOICE_ID", None)
@@ -35,32 +35,62 @@ def make_filename(prefix="tts", ext="mp3"):
     unique = uuid.uuid4().hex[:8]
     return f"{prefix}_{ts}_{unique}.{ext}"
 
-def tts_to_file(text, voice_id):
+def tts_to_file_elevenlabs(text, voice_id):
     """
     Uses ElevenLabs SDK to synthesize speech and save an mp3 file.
     Returns the local path to the saved file.
     """
-    out_name = make_filename("tts", "mp3")
+    out_name = make_filename("tts_eleven", "mp3")
     out_path = os.path.join(STORAGE_DIR, out_name)
 
+    # This returns a generator of byte chunks
+    audio_gen = client.text_to_speech.convert(
+        voice_id=voice_id,
+        text=text,
+        model_id="eleven_multilingual_v2",
+        output_format="mp3_44100_128"
+    )
+
+    # Combine all chunks into one bytes object
+    audio_bytes = b"".join(audio_gen)
+
+    with open(out_path, "wb") as f:
+        f.write(audio_bytes)
+
+    return out_path
+
+def tts_to_file_gtts_fallback(text):
+    """
+    Fallback TTS usando Google TTS (gratuito) cuando ElevenLabs no está disponible.
+    """
+    from gtts import gTTS
+    
+    out_name = make_filename("tts_gtts", "mp3")
+    out_path = os.path.join(STORAGE_DIR, out_name)
+    
+    # Detectar idioma (simple heurística)
+    lang = 'es' if any(char in text.lower() for char in 'ñáéíóúü') else 'en'
+    
+    tts = gTTS(text=text, lang=lang, slow=False)
+    tts.save(out_path)
+    
+    return out_path
+
+def tts_to_file(text, voice_id):
+    """
+    TTS con fallback automático: intenta ElevenLabs, si falla usa gTTS.
+    """
     try:
-        # This returns a generator of byte chunks
-        audio_gen = client.text_to_speech.convert(
-            voice_id=voice_id,
-            text=text,
-            model_id="eleven_multilingual_v2",
-            output_format="mp3_44100_128"
-        )
-
-        # Combine all chunks into one bytes object
-        audio_bytes = b"".join(audio_gen)
-
-        with open(out_path, "wb") as f:
-            f.write(audio_bytes)
-
-        return out_path
+        # Intentar ElevenLabs primero
+        return tts_to_file_elevenlabs(text, voice_id)
     except Exception as e:
-        raise
+        error_str = str(e)
+        if 'quota_exceeded' in error_str or 'credits' in error_str.lower():
+            print(f"⚠️  ElevenLabs sin créditos, usando fallback gratuito...", file=sys.stderr)
+            return tts_to_file_gtts_fallback(text)
+        else:
+            # Otro tipo de error, propagar
+            raise
 
 def log_with_spacing(message):
     print("\n" + message + "\n", file=sys.stderr)

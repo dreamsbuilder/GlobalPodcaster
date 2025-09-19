@@ -1,5 +1,7 @@
 import sys
 import json
+import time
+import os
 
 def load_seen_episodes():
     return set()  # Placeholder, la nueva función usará el feed_url
@@ -40,24 +42,43 @@ def filter_new_episodes(entries, seen):
     return new_episodes
 
 
-# --- NUEVO: Manejo de estado por feed ---
+# --- UNIFICADO: Usar el sistema feed_monitor_state ---
 import hashlib
 
+STATE_DIR = "feed_monitor_state"
+
+def get_feed_id(feed_url):
+    """Genera un ID único para el feed basado en la URL"""
+    return hashlib.md5(feed_url.encode()).hexdigest()[:12]
+
 def get_state_file(feed_url):
-    h = hashlib.sha256(feed_url.encode()).hexdigest()[:16]
-    return f"seen_episodes_{h}.json"
+    """Ruta del archivo de estado usando el sistema unificado"""
+    feed_id = get_feed_id(feed_url)
+    return os.path.join(STATE_DIR, f"last_check_{feed_id}.json")
 
 def load_seen_episodes_for_feed(feed_url):
+    """Carga episodios vistos usando el formato feed_monitor_state"""
     state_file = get_state_file(feed_url)
     if os.path.exists(state_file):
         with open(state_file, "r") as f:
-            return set(json.load(f))
+            data = json.load(f)
+            # Convertir GUIDs a set para compatibilidad
+            return set(data.get("episodes", []))
     return set()
 
 def save_seen_episodes_for_feed(feed_url, seen):
+    """Guarda episodios vistos usando el formato feed_monitor_state"""
+    os.makedirs(STATE_DIR, exist_ok=True)
     state_file = get_state_file(feed_url)
+    
+    # Usar el formato estructurado del feed_monitor_state
+    state_data = {
+        "episodes": list(seen),
+        "last_check": time.time()
+    }
+    
     with open(state_file, "w") as f:
-        json.dump(list(seen), f)
+        json.dump(state_data, f, indent=2)
 
 def log_with_spacing(message):
     print("\n" + message, file=sys.stderr)

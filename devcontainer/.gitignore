@@ -1,1 +1,18 @@
+# ================================
+# DEVELOPMENT CONTAINER
+# ================================
+
+# Environment variables
 .env
+.env.local
+
+# Docker compose overrides
+docker-compose.override.yml
+docker-compose.yml.local
+
+# Container logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
