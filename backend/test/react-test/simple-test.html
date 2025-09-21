@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalPodcaster - Feed Monitor Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #cce7ff; border-color: #b3d9ff; }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ GlobalPodcaster - Feed Monitor Test</h1>
+        <p>Prueba simplificada del pipeline con solo feed-monitor-agent</p>
+        
+        <div id="status" class="status info">
+            <strong>Estado:</strong> Listo para probar
+        </div>
+
+        <div class="buttons">
+            <button id="createBtn" onclick="createSession()">1. 🚀 Crear Sesión</button>
+            <button id="triggerBtn" onclick="triggerPipeline()" disabled>2. 📡 Ejecutar Pipeline</button>
+            <button id="statusBtn" onclick="getAgentStatus()" disabled>3. 📊 Estado Agente</button>
+            <button id="clearBtn" onclick="clearResults()">🗑️ Limpiar</button>
+        </div>
+
+        <div id="result" class="result">Esperando pruebas...</div>
+    </div>
+
+    <script>
+        let currentSession = null;
+        let eventSource = null;
+        let feedMonitorEndpoint = null;
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<strong>Estado:</strong> ${message}`;
+            status.className = `status ${type}`;
+        }
+
+        function log(message) {
+            const result = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            result.textContent += logEntry;
+            result.scrollTop = result.scrollHeight;
+        }
+
+        function clearResults() {
+            document.getElementById('result').textContent = 'Log limpiado...\n';
+            updateStatus('Listo para probar', 'info');
+        }
+
+        async function createSession() {
+            const btn = document.getElementById('createBtn');
+            const triggerBtn = document.getElementById('triggerBtn');
+            const statusBtn = document.getElementById('statusBtn');
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = '⏳ Creando...';
+                updateStatus('Creando sesión...', 'info');
+                
+                log('🚀 Creando sesión con feed-monitor-agent...');
+
+                // Crear sesión con formato correcto para Coral Server
+                const sessionResponse = await fetch('http://localhost:5555/sessions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        applicationId: 'app',
+                        privacyKey: 'priv',
+                        agentGraph: {
+                            agents: {
+                                'feed-monitor-agent': {
+                                    type: "local",
+                                    agentType: 'feed-monitor-agent',
+                                    options: {},
+                                    systemPrompt: null,
+                                    tools: [],
+                                    blocking: true
+                                }
+                            },
+                            links: [['feed-monitor-agent']],
+                            tools: {}
+                        }
+                    })
+                });
+
+                if (!sessionResponse.ok) {
+                    throw new Error(`Error creando sesión: ${sessionResponse.statusText}`);
+                }
+
+                currentSession = await sessionResponse.json();
+                log(`✅ Sesión creada: ${currentSession.sessionId}`);
+
+                // Obtener endpoints de agentes
+                const agentsResponse = await fetch(
+                    `http://localhost:5555/devmode/${currentSession.applicationId}/${currentSession.privacyKey}/agents?sessionId=${currentSession.sessionId}`
+                );
+
+                if (!agentsResponse.ok) {
+                    throw new Error(`Error obteniendo agentes: ${agentsResponse.statusText}`);
+                }
+
+                const agents = await agentsResponse.json();
+                log(`📋 Agentes disponibles: ${agents.length}`);
+
+                // Buscar feed-monitor-agent
+                const feedMonitor = agents.find(agent => agent.agentId === 'feed-monitor-agent');
+                if (feedMonitor) {
+                    feedMonitorEndpoint = feedMonitor.endpoint;
+                    log(`🎯 Feed Monitor Endpoint: ${feedMonitorEndpoint}`);
+                    
+                    triggerBtn.disabled = false;
+                    statusBtn.disabled = false;
+                    updateStatus('Sesión activa - Lista para usar', 'success');
+                } else {
+                    throw new Error('feed-monitor-agent no encontrado');
+                }
+
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                updateStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '1. 🚀 Crear Sesión';
+            }
+        }
+
+        async function triggerPipeline() {
+            if (!feedMonitorEndpoint || !currentSession) {
+                log('❌ Primero crear una sesión');
+                return;
+            }
+
+            const btn = document.getElementById('triggerBtn');
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = '⏳ Ejecutando...';
+                updateStatus('Ejecutando pipeline...', 'info');
+                
+                log('📡 Enviando comando CHECK_FEEDS al feed-monitor-agent...');
+
+                const response = await fetch(feedMonitorEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: 'CHECK_FEEDS',
+                        sender: 'dashboard-test'
+                    }),
+                    params: {
+                        sessionId: currentSession.sessionId
+                    }
+                });
+
+                log(`📡 Respuesta: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    log(`📋 Resultado del pipeline:`);
+                    log(result);
+                    updateStatus('Pipeline ejecutado exitosamente', 'success');
+                } else {
+                    throw new Error(`Error en pipeline: ${response.statusText}`);
+                }
+
+            } catch (error) {
+                log(`❌ Error ejecutando pipeline: ${error.message}`);
+                updateStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '2. 📡 Ejecutar Pipeline';
+            }
+        }
+
+        async function getAgentStatus() {
+            if (!feedMonitorEndpoint || !currentSession) {
+                log('❌ Primero crear una sesión');
+                return;
+            }
+
+            const btn = document.getElementById('statusBtn');
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = '⏳ Consultando...';
+                
+                log('📊 Enviando PING al feed-monitor-agent...');
+
+                const response = await fetch(feedMonitorEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: 'PING',
+                        sender: 'dashboard-test'
+                    }),
+                    params: {
+                        sessionId: currentSession.sessionId
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.text();
+                    log(`✅ Estado del agente:`);
+                    log(result);
+                } else {
+                    throw new Error(`Error consultando estado: ${response.statusText}`);
+                }
+
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '3. 📊 Estado Agente';
+            }
+        }
+
+        // Mostrar información inicial
+        log('🎙️ GlobalPodcaster Dashboard Simplificado');
+        log('📋 Configuración: Solo feed-monitor-agent con Coral');
+        log('🚀 Listo para crear sesión...');
+    </script>
+</body>
+</html>
