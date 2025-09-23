@@ -1,48 +1,10 @@
-# 🏓 Global Podcaster App
+# 🎙️Global Podcaster
 `Global Podcaster App` is a multi-agent pipeline that fetches podcast audio from any RSS feed, transcribes it to text using Deepgram, and translates the transcript to your target language using Mistral AI—all orchestrated via Coral Protocol.  
 This project demonstrates how to build composable, language-agnostic agent workflows for global podcast accessibility and discovery.
 
-## 🛠️ How the Automated Feed Monitoring Works
-
-### feeds.txt: Managing RSS Feeds
-- The `feeds.txt` file contains one RSS feed URL per line.
-- You can add or remove feeds at any time. Lines starting with `#` are comments and ignored.
-- Example:
-  ```
-  https://feeds.npr.org/500005/podcast.xml
-  https://feeds.megaphone.fm/sciencevs
-  #https://another-feed.com/rss
-  ```
-
-### seen_episodes files
-- For each RSS feed, the system creates a state file named `seen_episodes_<hash>.json`.
-- This file stores the identifiers of episodes already processed for that feed, preventing duplicate processing.
-- You can delete these files to force reprocessing of all episodes for a feed.
-
-### Monitoring process
-- The `monitor_feeds.py` script reads all URLs from `feeds.txt` and, every 2 minutes, runs the pipeline for each feed.
-- The pipeline flow is:
-  1. **rss-monitor-agent**: Detects new (unseen) episodes for each feed.
-  2. **rss-fetch-agent**: Fetches metadata for all episodes in the feed.
-  3. **transcription-agent**: Transcribes the audio of each new episode using Deepgram.
-  4. **translation-agent**: Translates the transcript using Mistral AI.
-  5. The final result is a JSON with title, audio_url, transcript, and translation for each new episode.
-
-### Customization
-- You can change the monitoring interval by editing the `POLL_INTERVAL` variable in `monitor_feeds.py` (value in seconds).
-- You can add/remove feeds at any time by editing `feeds.txt`.
-
-### Notes
-- If an episode is very long, the translation may be limited by the `max_tokens` parameter in the translation agent.
-- To reset tracking for a feed, delete its corresponding `seen_episodes_<hash>.json` file.
-
------
-#  🎙️Global Podcaster
-
-### **Global Podcaster: Breaking language barriers in podcasting**
+### **Breaking language barriers in podcasting**
 
 What if your podcast could instantly reach millions of new listeners in Japan, Spain, or Germany, all while speaking in **your own authentic voice**? Global Podcaster is a revolutionary platform that breaks the language barrier for content creators, turning your local podcast into a global phenomenon. 
-
 
 We solve a major problem for creators: reaching international audiences is expensive, time-consuming, and often results in robotic, impersonal dubbing. Global Podcaster changes everything with a seamless, AI-powered workflow.
 
@@ -286,114 +248,113 @@ ngrok http 5555
 ```
 > use the public address to conect the server on `Coral Discovery`
 
-### Nota importante para Coral Studio y servidores públicos
+### Important note for Coral Studio and public servers
 
-Si necesitas conectar Coral Studio a un servidor Coral expuesto mediante HTTPS (por ejemplo, usando ngrok), debes permitir que el campo de host acepte URLs completas (con http o https). Por defecto, Coral Studio solo usaba http, lo que causaba errores de "mixed content" en navegadores modernos.
+If you need to connect Coral Studio to a Coral server exposed via HTTPS (for example, using ngrok), you must allow the host field to accept full URLs (with http or https). By default, Coral Studio only used http, which caused "mixed content" errors in modern browsers.
 
-**Solución aplicada:**
+**Fix applied:**
 
-En el archivo `coral/coral-studio/src/lib/components/server-switcher.svelte`, se ha modificado la línea que realiza la petición de test de conexión:
+In the `coral/coral-studio/src/lib/components/server-switcher.svelte` file, the line that makes the connection test request has been modified:
 
-**Antes:**
+**Before:**
 ```js
 const res = await fetch(`http://${host}/api/v1/registry`);
 ```
 
-**Después:**
+**After:**
 ```js
-// Si el host ya incluye http o https, úsalo tal cual; si no, añade http:// por compatibilidad retro.
+// If the host already includes http or https, use it as is; if not, add http:// for backward compatibility.
 let url = host.startsWith('http://') || host.startsWith('https://')
-	? host
-	: `http://${host}`;
+? host
+: `http://${host}`;
 const res = await fetch(`${url}/api/v1/registry`);
 ```
 
-Esto permite introducir la URL completa (por ejemplo, `https://xxxx.ngrok-free.app`) al añadir un server en Coral Studio, solucionando problemas de seguridad y permitiendo conexiones remotas seguras.
+This allows you to enter the full URL (e.g., `https://xxxx.ngrok-free.app`) when adding a server in Coral Studio, addressing security issues and allowing secure remote connections.
 
-**Cambio adicional necesario:**
+**Additional Change Required:**
 
-En el archivo `coral/coral-studio/src/lib/components/app-sidebar.svelte`, también es necesario modificar las llamadas al registry y a las sesiones para que usen el protocolo correcto (http o https) según lo introducido en el host.
+In the `coral/coral-studio/src/lib/components/app-sidebar.svelte` file, you also need to modify the registry and session calls to use the correct protocol (http or https) as entered in the host.
 
-**Antes:**
+**Before:**
 ```js
 const agents = (await fetch(`http://${sessCtx.connection.host}/api/v1/registry`).then((res) => res.json())) as RegistryAgent[];
 const sessions = (await fetch(`http://${sessCtx.connection.host}/api/v1/sessions`).then((res) => res.json())) as string[];
 ```
 
-**Después:**
+**After:**
 ```js
-let url = sessCtx.connection.host.startsWith('http://') || sessCtx.connection.host.startsWith('https://')
-	? sessCtx.connection.host
-	: `http://${sessCtx.connection.host}`;
+let url = sessCtx.connection.host.startsWith('http://') || sessCtx.connection.host.startsWith('https://') 
+? sessCtx.connection.host 
+: `http://${sessCtx.connection.host}`;
 const agents = (await fetch(`${url}/api/v1/registry`).then((res) => res.json())) as RegistryAgent[];
 const sessions = (await fetch(`${url}/api/v1/sessions`).then((res) => res.json())) as string[];
 ```
 
-Esto asegura que todas las llamadas al registry y a las sesiones respeten el protocolo introducido, evitando errores de mixed content y permitiendo conexiones seguras.
+This ensures that all calls to the registry and sessions respect the entered protocol, avoiding mixed content errors and allowing secure connections.
 
-**Cambio adicional para la creación de sesiones:**
+**Additional change for session creation:**
 
-En el archivo `coral/coral-studio/src/lib/components/dialogs/create-session.svelte`, también es necesario modificar la llamada para crear sesiones para que use el protocolo correcto (http o https) según lo introducido en el host.
+In the `coral/coral-studio/src/lib/components/dialogs/create-session.svelte` file, you also need to modify the session creation call to use the correct protocol (http or https) as entered in the host.
 
-**Antes:**
+**Before:**
 ```js
 const res = await fetch(`http://${ctx.connection.host}/sessions`, { ... });
 ```
 
-**Después:**
+**After:**
 ```js
 let url = ctx.connection.host.startsWith('http://') || ctx.connection.host.startsWith('https://')
-	? ctx.connection.host
-	: `http://${ctx.connection.host}`;
+? ctx.connection.host
+: `http://${ctx.connection.host}`;
 const res = await fetch(`${url}/sessions`, { ... });
 ```
 
-Esto garantiza que la creación de sesiones también respete el protocolo introducido, evitando errores de mixed content y permitiendo conexiones seguras.
+This ensures that session creation also respects the introduced protocol, avoiding mixed content errors and allowing secure connections.
 
-**Cambio adicional para WebSocket seguro:**
+**Additional change for secure WebSocket:**
 
-En el archivo `coral/coral-studio/src/lib/session.svelte.ts`, es necesario modificar la construcción de la URL del WebSocket para que use `wss://` si la página está en HTTPS.
+In the `coral/coral-studio/src/lib/session.svelte.ts` file, the WebSocket URL construction needs to be modified to use `wss://` if the page is on HTTPS.
 
-**Antes:**
+**Before:**
 ```js
 this.socket = new WebSocket(
-	`ws://${host}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
+`ws://${host}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
 );
 ```
 
-**Después:**
-```js
-const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-this.socket = new WebSocket(
-	`${wsProtocol}${host}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
-);
-```
-
-Esto evita errores de seguridad en navegadores modernos y permite la conexión de Coral Studio a través de HTTPS.
-
-**Corrección final para WebSocket seguro:**
-
-En el archivo `coral/coral-studio/src/lib/session.svelte.ts`, es necesario eliminar cualquier prefijo `http://` o `https://` del host antes de anteponer `wss://` o `ws://` al construir la URL del WebSocket.
-
-**Antes:**
+**After:**
 ```js
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 this.socket = new WebSocket(
-	`${wsProtocol}${host}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
+`${wsProtocol}${host}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
 );
 ```
 
-**Después:**
+This prevents security issues in modern browsers and allows Coral Studio to connect over HTTPS.
+
+**Final fix for secure WebSocket:**
+
+In the `coral/coral-studio/src/lib/session.svelte.ts` file, any `http://` or `https://` host prefixes must be removed before prepending `wss://` or `ws://` when constructing the WebSocket URL.
+
+**Before:**
+```js
+const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+this.socket = new WebSocket( 
+`${wsProtocol}${host}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
+);
+```
+
+**After:**
 ```js
 let cleanHost = host.replace(/^https?:\/\//, '');
 const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 this.socket = new WebSocket(
-	`${wsProtocol}${cleanHost}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
+`${wsProtocol}${cleanHost}/debug/${appId}/${privacyKey}/${session}/?timeout=10000`
 );
 ```
 
-Esto evita URLs mal formadas como `wss://https//...` y garantiza la compatibilidad con servidores públicos y entornos seguros.
-
+This prevents malformed URLs like `wss://https//...` and ensures compatibility with public servers and secure environments.
 
 ### If you are using codespaces but do not want to use ngrok
 - Copy the files in /temp to the corresponding locations in /coral, overwriting the existing ones.
@@ -427,3 +388,36 @@ This variable will be automatically read by the translation agent. If it is miss
 > State files and results are stored in the project root directory.
 
 
+## How the Automated Feed Monitoring Works
+
+### feeds.txt: Managing RSS Feeds
+- The `feeds.txt` file contains one RSS feed URL per line.
+- You can add or remove feeds at any time. Lines starting with `#` are comments and ignored.
+- Example:
+  ```
+  https://feeds.npr.org/500005/podcast.xml
+  https://feeds.megaphone.fm/sciencevs
+  #https://another-feed.com/rss
+  ```
+
+### seen_episodes files
+- For each RSS feed, the system creates a state file named `seen_episodes_<hash>.json`.
+- This file stores the identifiers of episodes already processed for that feed, preventing duplicate processing.
+- You can delete these files to force reprocessing of all episodes for a feed.
+
+### Monitoring process
+- The `monitor_feeds.py` script reads all URLs from `feeds.txt` and, every 2 minutes, runs the pipeline for each feed.
+- The pipeline flow is:
+  1. **rss-monitor-agent**: Detects new (unseen) episodes for each feed.
+  2. **rss-fetch-agent**: Fetches metadata for all episodes in the feed.
+  3. **transcription-agent**: Transcribes the audio of each new episode using Deepgram.
+  4. **translation-agent**: Translates the transcript using Mistral AI.
+  5. The final result is a JSON with title, audio_url, transcript, and translation for each new episode.
+
+### Customization
+- You can change the monitoring interval by editing the `POLL_INTERVAL` variable in `monitor_feeds.py` (value in seconds).
+- You can add/remove feeds at any time by editing `feeds.txt`.
+
+### Notes
+- If an episode is very long, the translation may be limited by the `max_tokens` parameter in the translation agent.
+- To reset tracking for a feed, delete its corresponding `seen_episodes_<hash>.json` file.
